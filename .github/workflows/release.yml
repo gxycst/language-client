@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'    # 只有推送 tag 才触发，比如 v1.0.0
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          pnpm install || npm install
+
+      - name: Build Vite
+        run: |
+          npm run build    # 先打vite的静态文件，如果是pnpm就改成 pnpm build
+
+      - name: Build Electron App
+        run: |
+          npm run electron:build   # 你自己定义的 electron-builder 打包命令
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist_electron/*.dmg
+            dist_electron/*.exe
+            dist_electron/*.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
