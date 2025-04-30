@@ -13,6 +13,7 @@ asarUnpack:
 win:
   executableName: language-client
 nsis:
+  oneClick: false
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}

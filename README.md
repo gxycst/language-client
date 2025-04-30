@@ -1,5 +1,5 @@
 # language-client
-
+# node-version v22.15.0
 An Electron application with Vue
 
 ## Recommended IDE Setup

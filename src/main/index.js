@@ -53,19 +53,19 @@ async function createWindow() {
     return { action: 'deny' }
   })
   let activated = await checkActivation()
-  console.log('is active',activated);
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     const url = activated
       ? `${process.env['ELECTRON_RENDERER_URL']}#/activated`
       : `${process.env['ELECTRON_RENDERER_URL']}#/not-activated`
-    mainWindow.loadURL(url)
+    await mainWindow.loadURL(url)
   } else {
-    const url = activated
-      ? `file://${path.join(__dirname, '../renderer/index.html')}#/activated`
-      : `file://${path.join(__dirname, '../renderer/index.html')}#/not-activated`
-    mainWindow.loadFile(join(__dirname, url))
+    const filePath = join(__dirname, '../renderer/index.html')
+    await mainWindow.loadFile(filePath)
+    await mainWindow.webContents.executeJavaScript(`
+      window.location.hash = '${activated ? '#/activated' : '#/not-activated'}'
+    `)
   }
 }
 
