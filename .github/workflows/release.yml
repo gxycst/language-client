@@ -34,7 +34,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.os }}
-          path: dist/  # 这里根据你的build输出目录，如果不是dist改成对应路径
+          path: dist/  # 根据你的build输出目录，上传dist目录下所有文件
 
   release:
     needs: build
@@ -44,11 +44,12 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          path: dist-all
+          name: dist-macos  # 这个要和你上传的name一致
+          path: dist-macos # 下载到本地的文件夹路径
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist-all/**/*
+          files: dist-macos/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
